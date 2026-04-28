@@ -1,5 +1,5 @@
 <!-- markdownlint-disable no-duplicate-heading -->
-# Data Transfer via S3
+# Data Exchange via Amazon S3
 
 To support secure B2B data transfer operations from customers, PostPilot supports encrypted file drops via Amazon S3.
 
