@@ -10,3 +10,9 @@ _each of the changes were made._
 * Adds `Data Exchange via Amazon S3` documentation.
 * Adds Ruby/Python example scripts for S3 file uploads via AWS cross-account configuration.
 * Adds Ruby/Python example scripts for S3 file uploads via GCP ServiceAccount OIDC federated identity.
+
+### [05/05/2026]
+
+* Adds `Customers Schema` documentation.
+* Adds `Orders Schema` documentation.
+* Readme updates to include links to new schema documentation and example scripts.
