@@ -6,3 +6,4 @@ integrations, etc.
 ## Documentation Index
 
 * [Data Ingestion Guide](./data-ingestion-guide/README.md)
+* [Customer Data & Targeting API](./customer-data-api/README.md)
