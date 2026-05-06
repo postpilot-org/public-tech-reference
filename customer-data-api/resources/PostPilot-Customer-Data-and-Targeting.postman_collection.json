@@ -1,0 +1,623 @@
+{
+  "info": {
+    "_postman_id": "8091d8f4-856d-417e-a676-744911e15657",
+    "name": "PostPilot API — Customer Data & Targeting",
+    "description": "The PostPilot API enables you to manage customer data and create targeted direct mail campaigns programmatically.\n\n## What you can do\n\n- **Import customer contacts** with full postal and email data\n- **Sync customer events** from your platform (purchases, signups, custom actions)\n- **Create targeting segments** based on customer behavior and attributes\n\n## Getting Started\n\n1. Log in to your PostPilot account\n2. Navigate to **Integrations → API Connection**\n3. Click **Manage** under the API Connection card\n4. Click **New Connection** (or select an existing one)\n5. Copy your API key from the Developer Access section\n6. Set the `api_key` collection variable to your key\n\n## Base URL\n\n**Production:** `https://api.postpilot.com`\n\n## Authentication\n\nAll API requests authenticate via the API key embedded in the URL path:\n\n```\nPOST https://api.postpilot.com/v1/{api_key}/{endpoint}\n```\n\nThe API key is a connection token generated when you create an API Connection in PostPilot. It serves as both identification and authorization.\n\n> **Security:** Do not share your API connection URLs. Anyone with the URL can utilize the API on your behalf. You can regenerate (rotate) your API key at any time from the Developer Access screen — this will invalidate the previous key.\n\n## API Logs\n\nPostPilot provides a built-in API Logs screen (available in the API Connection area) showing the last 48 hours of API calls. Use this for troubleshooting new integrations.\n\n## Three Endpoint Families\n\n| Endpoint | Path | Best For | Requires Address? |\n|---|---|---|---|\n| MailMatch via API | `api_email_contact` | Email-only contacts; PostPilot resolves address | No |\n| Full Contact | `api_full_contact` | Contacts with a complete mailing address | Yes |\n| Shopify Customer Events | `shopify_customer_event` | Triggering sends to existing Shopify customers | No (uses Shopify data) |\n\n## Custom Fields\n\nAll three endpoints support up to 3 custom fields (`custom_1`, `custom_2`, `custom_3`) for:\n- **Personalizing postcard content** — pass dynamic values (pet name, product, offer code) and reference them as dynamic variables in your postcard design\n- **Advanced segmentation** — filter segments by custom field values to route contacts to different campaigns (e.g., `custom_1: \"email_unsubscribed\"`)\n\n## Migration Note\n\nAPI-triggered segments replace the older flow-based API approach. Existing flow trigger URLs remain backwards-compatible, but all new API-driven campaigns should use segments. See the help article for migration guidance.\n\n## Resources\n\n- [API-Triggered Segments & MailMatch via API](https://help.postpilot.com/knowledge/api-triggered-segments-mailmatch-via-api)\n- [Creating an API Connection](https://help.postpilot.com/knowledge/creating-an-api-connection-for-external-use)\n- [Using an External API Connection in Flows (legacy)](https://help.postpilot.com/knowledge/using-an-external-api-connection-in-flows)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53832994",
+    "_collection_link": "https://go.postman.co/collection/53832994-8091d8f4-856d-417e-a676-744911e15657?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Email Contacts (MailMatch)",
+      "item": [
+        {
+          "name": "Create Email Contact — Minimal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane.doe@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_email_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_email_contact"
+              ]
+            },
+            "description": "Submit a single email address for address append. PostPilot will attempt to match the email to a physical mailing address using data partners.\n\nThis is the simplest possible call — only `email` is required. Use this when you have no additional customer data.\n\n**Required fields:**\n- `email` (string) — The customer's email address\n\n**Response:** PostPilot creates or updates the contact record. The contact will enter any matching API Email Contact segment and be picked up by the associated campaign."
+          },
+          "response": [
+            {
+              "name": "Success — Contact Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"jane.doe@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/{{api_key}}/api_email_contact",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{api_key}}",
+                    "api_email_contact"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Email Contact — Full",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"fullname\": \"Jane Doe\",\n  \"custom_1\": \"VIP Customer\",\n  \"custom_2\": \"Newsletter Subscriber\",\n  \"custom_3\": \"Premium Plan\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_email_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_email_contact"
+              ]
+            },
+            "description": "Submit an email contact with full name and optional custom fields. Including the name improves matching accuracy. Custom fields enable segmentation and postcard personalization.\n\n**Required fields:**\n- `email` (string) — The customer's email address\n\n**Optional fields:**\n- `fullname` (string) — Customer's full name (improves match accuracy)\n- `custom_1` (string) — Custom field 1 for segmentation or personalization\n- `custom_2` (string) — Custom field 2 for segmentation or personalization\n- `custom_3` (string) — Custom field 3 for segmentation or personalization\n\n**Tip:** Use `custom_1` to differentiate event types when replacing multiple flows with a single endpoint (e.g., `\"custom_1\": \"email_unsubscribed\"`)."
+          },
+          "response": [
+            {
+              "name": "Success — Contact Created with Custom Fields",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"fullname\": \"Jane Doe\",\n  \"custom_1\": \"VIP Customer\",\n  \"custom_2\": \"Newsletter Subscriber\",\n  \"custom_3\": \"Premium Plan\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/{{api_key}}/api_email_contact",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{api_key}}",
+                    "api_email_contact"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true\n}"
+            }
+          ]
+        }
+      ],
+      "description": "## Email Contacts API (MailMatch)\n\nImport customer email addresses to be enriched with postal data through PostPilot's address-append service.\n\n### When to use\n\n- You only have customer emails (no physical addresses)\n- You want PostPilot to find and append mailing addresses automatically\n\n### How it works\n\n1. Submit email addresses via the API\n2. PostPilot matches emails to postal addresses using data partners\n3. Matched contacts enter your segment and are picked up by your campaign\n\n### Match Rates\n\nTypical match rates range from **30–50%**, depending on data quality and geography. B2B lists, international records, and corporate emails tend to perform lower (20–25%).\n\n### Best for\n\nEmail lists, newsletter subscribers, digital-first customer bases, and any brand with an ESP that wants to run direct mail without collecting physical addresses."
+    },
+    {
+      "name": "Full Address Contacts",
+      "item": [
+        {
+          "name": "Create Full Contact — US Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference_id\": \"customer_12345\",\n  \"email\": \"john.smith@example.com\",\n  \"fullname\": \"John Smith\",\n  \"line1\": \"123 Main Street\",\n  \"line2\": \"Apt 4B\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postal_code\": \"10001\",\n  \"country\": \"US\",\n  \"custom_1\": \"Premium Member\",\n  \"custom_2\": \"Loyalty Program\",\n  \"custom_3\": \"Birthday: Jan 15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_full_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_full_contact"
+              ]
+            },
+            "description": "Create a complete customer record with a verified US postal address. Ideal for e-commerce orders or CRM exports with full customer data. Includes all available fields.\n\n**Required fields:**\n- `reference_id` (string) — Unique identifier for the recipient (often the customer email or internal ID)\n- `fullname` (string) — Customer's full name (OR use `firstname`+`lastname`, OR `company`)\n- `line1` (string) — Street address line 1\n- `city` (string) — City\n- `state` (string) — USPS two-character state abbreviation\n- `postal_code` (string) — ZIP code\n- `country` (string) — ISO 3166 two-character country code\n\n**Optional fields:**\n- `email` (string) — Customer's email address\n- `line2` (string) — Street address line 2 (apt, suite, etc.)\n- `custom_1` (string) — Custom field 1\n- `custom_2` (string) — Custom field 2\n- `custom_3` (string) — Custom field 3"
+          },
+          "response": [
+            {
+              "name": "Success — Full US Contact Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reference_id\": \"customer_12345\",\n  \"email\": \"john.smith@example.com\",\n  \"fullname\": \"John Smith\",\n  \"line1\": \"123 Main Street\",\n  \"line2\": \"Apt 4B\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postal_code\": \"10001\",\n  \"country\": \"US\",\n  \"custom_1\": \"Premium Member\",\n  \"custom_2\": \"Loyalty Program\",\n  \"custom_3\": \"Birthday: Jan 15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/{{api_key}}/api_full_contact",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{api_key}}",
+                    "api_full_contact"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Full Contact — First/Last Name",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference_id\": \"customer_67890\",\n  \"email\": \"maria.santos@example.com\",\n  \"firstname\": \"Maria\",\n  \"lastname\": \"Santos\",\n  \"line1\": \"456 Oak Avenue\",\n  \"city\": \"Los Angeles\",\n  \"state\": \"CA\",\n  \"postal_code\": \"90001\",\n  \"country\": \"US\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_full_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_full_contact"
+              ]
+            },
+            "description": "Create a contact using separate `firstname` and `lastname` fields instead of `fullname`. Choose the name format that matches your data structure.\n\n**Required fields:**\n- `reference_id` (string) — Unique identifier\n- `firstname` (string) — Customer's first name\n- `lastname` (string) — Customer's last name\n- `line1` (string) — Street address\n- `city` (string) — City\n- `state` (string) — USPS two-character state abbreviation\n- `postal_code` (string) — ZIP code\n- `country` (string) — ISO 3166 country code\n\n**Optional fields:**\n- `email` (string) — Customer's email\n- `line2` (string) — Address line 2\n- `custom_1`, `custom_2`, `custom_3` (string) — Custom fields"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Full Contact — International",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference_id\": \"customer_intl_001\",\n  \"email\": \"thomas.mueller@example.com\",\n  \"fullname\": \"Thomas Mueller\",\n  \"line1\": \"Berliner Strasse 123\",\n  \"postal_code\": \"10115\",\n  \"country\": \"DE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_full_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_full_contact"
+              ]
+            },
+            "description": "Submit international addresses outside the US. Use the ISO 3166 two-character `country` code to specify the destination country.\n\n**Note:** International address formats vary. Provide as much detail as available in `line1` and `line2`. The `state` field may be omitted or used for province/region as appropriate.\n\n**Required fields:**\n- `reference_id` (string) — Unique identifier\n- `fullname` OR `firstname`+`lastname` OR `company` (string)\n- `line1` (string) — Street address\n- `postal_code` (string) — Postal code in local format\n- `country` (string) — ISO 3166 two-character country code (e.g., \"DE\", \"GB\", \"CA\")\n\n**Optional fields:**\n- `email`, `line2`, `city`, `state`, `custom_1`, `custom_2`, `custom_3`"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Full Contact — Minimal Required",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference_id\": \"ref_minimal_001\",\n  \"fullname\": \"Jane Wilson\",\n  \"line1\": \"789 Elm Street\",\n  \"city\": \"Chicago\",\n  \"state\": \"IL\",\n  \"postal_code\": \"60601\",\n  \"country\": \"US\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/api_full_contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "api_full_contact"
+              ]
+            },
+            "description": "Submit with only the required fields — no email, no custom fields. Use when you have minimal customer data available.\n\n**Required fields:**\n- `reference_id` (string) — Unique identifier\n- `fullname` OR `firstname`+`lastname` OR `company` (string)\n- `line1` (string) — Street address\n- `city` (string) — City\n- `state` (string) — USPS two-character state abbreviation\n- `postal_code` (string) — ZIP code\n- `country` (string) — ISO 3166 country code"
+          },
+          "response": []
+        }
+      ],
+      "description": "## Full Address Contacts API\n\nImport complete customer records with verified postal addresses and email data.\n\n### When to use\n\n- You have full customer information (email + mailing address)\n- You're syncing from e-commerce platforms, CRMs, or order systems\n\n### What you can include\n\n- **Required:** reference_id, name (fullname OR firstname+lastname OR company), line1, city, state, postal_code, country\n- **Optional:** email, line2, custom_1, custom_2, custom_3\n\n### Name field rules\n\nProvide exactly ONE of:\n- `fullname` — e.g., \"John Smith\"\n- `firstname` + `lastname` — e.g., \"John\" / \"Smith\"\n- `company` — e.g., \"Acme Corp\"\n\n### Address format\n\n- `state` must be a standard USPS two-character abbreviation (e.g., \"NY\", \"CA\")\n- `country` must be a standard ISO 3166 two-character country code (e.g., \"US\", \"DE\")\n- `postal_code` should match the destination country format\n\n### Best for\n\nE-commerce orders, CRM exports, platforms with full customer data."
+    },
+    {
+      "name": "Shopify Customer Events",
+      "item": [
+        {
+          "name": "Create Event — With Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/shopify_customer_event",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "shopify_customer_event"
+              ]
+            },
+            "description": "Track a customer event using email as the identifier. Links the event to an existing Shopify customer in your PostPilot account via email match.\n\n**Required fields (one of):**\n- `email` (string) — Customer's email address\n\n**Optional fields:**\n- `custom_1`, `custom_2`, `custom_3` (string) — Event metadata for segmentation or personalization"
+          },
+          "response": [
+            {
+              "name": "Success — Event Recorded",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"customer@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/{{api_key}}/shopify_customer_event",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{api_key}}",
+                    "shopify_customer_event"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Event — With Customer ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"shopify_customer_123456\",\n  \"custom_1\": \"Loyalty Member\",\n  \"custom_2\": \"Preferred Customer\",\n  \"custom_3\": \"Birthday: March 15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/shopify_customer_event",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "shopify_customer_event"
+              ]
+            },
+            "description": "Track a customer event using the Shopify customer ID. More precise than email matching when you have the Shopify `customer_id` available.\n\n**Required fields (one of):**\n- `customer_id` (string) — The Shopify customer ID\n\n**Optional fields:**\n- `custom_1` (string) — Event metadata (e.g., loyalty tier, product category)\n- `custom_2` (string) — Additional metadata\n- `custom_3` (string) — Additional metadata\n\n**Tip:** Use custom fields to store event context like cart value, product category, or customer tier — useful for filtering in PostPilot segments."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Event — With Email and Custom Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"custom_1\": \"Loyalty Member\",\n  \"custom_2\": \"Preferred Customer\",\n  \"custom_3\": \"Birthday: March 15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/shopify_customer_event",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "shopify_customer_event"
+              ]
+            },
+            "description": "Track an event with email identification and up to 3 custom attributes. Use custom fields for storing event metadata like cart value, product category, or customer tier — very useful for custom filtering in PostPilot segments.\n\n**Required fields (one of):**\n- `email` (string) — Customer's email address\n\n**Optional fields:**\n- `custom_1` (string) — Custom attribute 1\n- `custom_2` (string) — Custom attribute 2\n- `custom_3` (string) — Custom attribute 3\n\n**Use case examples:**\n- `custom_1: \"cart_abandoned\"` + segment filter → abandoned cart postcard campaign\n- `custom_1: \"subscription_paused\"` → winback card\n- `custom_1: \"vip_tier_gold\"` → loyalty reward mailer"
+          },
+          "response": []
+        }
+      ],
+      "description": "## Shopify Customer Events API\n\nTrack custom customer events and behaviors for Shopify customers to enable behavior-based targeting.\n\n### When to use\n\n- You have Shopify customers already synced to PostPilot\n- You want to trigger campaigns based on custom events (e.g., abandoned cart, product view, milestone reached)\n\n### How it works\n\n1. Your platform sends an event (email or Shopify customer ID) to this endpoint\n2. PostPilot links the event to the existing Shopify customer record\n3. The customer enters any matching \"API Shopify customer event occurred\" segment\n4. The associated campaign picks them up and sends a postcard\n\n### Use cases\n\n- Send direct mail after specific customer actions\n- Target based on browsing behavior or purchase milestones\n- Trigger winback cards on subscription pause/cancel\n- Follow up support interactions with a handwritten note\n\n### Identifier options\n\nProvide ONE of:\n- `email` — PostPilot matches to the Shopify customer via email\n- `customer_id` — Shopify customer ID for precise matching\n\n### Best for\n\nShopify brands using external platforms (Braze, Bloomreach, Gorgias, Recharge, etc.) that can fire webhooks or API calls based on customer behavior."
+    },
+    {
+      "name": "Legacy — Flow Trigger (Deprecated)",
+      "item": [
+        {
+          "name": "Send to Customer (Flow Trigger)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference_id\": \"customer@example.com\",\n  \"firstname\": \"John\",\n  \"lastname\": \"Doe\",\n  \"email\": \"customer@example.com\",\n  \"line1\": \"123 Main St\",\n  \"line2\": \"Apt 4\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postal_code\": \"10001\",\n  \"country\": \"US\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/{{api_key}}/send_to_customer",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "{{api_key}}",
+                "send_to_customer"
+              ]
+            },
+            "description": "**DEPRECATED** — Use the Full Address Contact or Email Contact endpoints with segments instead.\n\nTrigger a postcard send via a specific flow. Each flow has a unique trigger URL (the `api_key` path segment is flow-specific). The URL is write-only and includes an obfuscated connection token, so no additional authentication headers are required.\n\n**Required fields:**\n- `reference_id` (string) — Unique identifier for the recipient (often the email address)\n- ONE of: `firstname` + `lastname`, OR `fullname`, OR `company`\n- `line1` (string) — Street address\n- `city` (string) — City\n- `state` (string) — USPS two-character state abbreviation\n- `postal_code` (string) — ZIP code\n- `country` (string) — ISO 3166 two-character country code\n\n**Optional fields:**\n- `email` (string)\n- `line2` (string)"
+          },
+          "response": []
+        }
+      ],
+      "description": "## Legacy Flow Trigger Endpoint (Deprecated)\n\nThe original API-triggered flow endpoint. New campaigns should use the segment-based endpoints above.\n\n**Note:** Existing flow trigger URLs remain backwards-compatible. You do not need to change webhook URLs or JSON bodies in your external system for simple setups. However, all new API-driven campaigns should be built as segments going forward.\n\n### Integrations that should continue using flows\n\n- **Recharge** — does not support custom JSON bodies in webhooks\n- **Omnisend** — webhook does not support custom JSON bodies\n- **LoyaltyLion** — native flows integration handles formatting\n- **LifeMatch Birthday** — relies on LifeMatch process only supported in flows"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// PostPilot API — Pre-request Script",
+          "// Validates that the api_key variable has been set before making requests.",
+          "",
+          "const apiKey = pm.collectionVariables.get('api_key');",
+          "",
+          "if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {",
+          "    console.warn('⚠️  PostPilot API key not configured.');",
+          "    console.warn('Set the api_key collection variable to your connection key.');",
+          "    console.warn('Find it in PostPilot → Integrations → API Connection → Developer Access.');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// PostPilot API — Collection-level Tests",
+          "",
+          "pm.test('Response status is 2xx', function () {",
+          "    pm.expect(pm.response.code).to.be.within(200, 299);",
+          "});",
+          "",
+          "pm.test('Response time is acceptable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "if (pm.response.headers.get('Content-Type')?.includes('application/json')) {",
+          "    pm.test('Response is valid JSON', function () {",
+          "        pm.response.json();",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.postpilot.com",
+      "description": "PostPilot API base URL (production)"
+    },
+    {
+      "key": "api_key",
+      "value": "YOUR_API_KEY_HERE",
+      "description": "Your PostPilot API connection key. Found in Integrations → API Connection → Developer Access."
+    }
+  ]
+}

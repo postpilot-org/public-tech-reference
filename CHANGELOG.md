@@ -16,3 +16,13 @@ _each of the changes were made._
 * Adds `Customers Schema` documentation.
 * Adds `Orders Schema` documentation.
 * Readme updates to include links to new schema documentation and example scripts.
+
+## `Customer Data & Targeting API`
+
+### [05/06/2026]
+
+* Adds `Customer Data & Targeting API` reference, covering the `api_email_contact`, `api_full_contact`, and
+  `shopify_customer_event` endpoints, plus the legacy `send_to_customer` flow trigger.
+* Includes the `PostPilot — Customer Data & Targeting` Postman collection under
+  `customer-data-api/resources/`.
+* Root `README.md` updated to link to the new API reference.
