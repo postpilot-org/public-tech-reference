@@ -13,15 +13,15 @@
   * Customers
   * Orders(with nested line items)
 
-## File Transfer
-* [Data Exchange via Amazon S3](data-exchange-via-amazon-s3.md)
+## Documentation
 
-## Contracts & Schema
-* 
+* [Data Exchange FAQ](data-exchange-faq.md)
+* [Data Exchange via Amazon S3](data-exchange-via-amazon-s3.md)
 * [File Reference: Customers](file-reference-customers.md)
 * [File Reference: Orders](file-reference-orders.md)
 
 ## Sync Frequency & Windows
+
 * Upload new/updated files to S3 at most every **60 minutes**.
 * Each file should contain all new and updated records since the previous run.
 * Overlapping windows (re-sending some records) is OK and recommended.
