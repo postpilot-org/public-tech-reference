@@ -21,6 +21,14 @@ _each of the changes were made._
 * Adds Ruby/Python example scripts for S3 file uploads via AWS cross-account configuration.
 * Adds Ruby/Python example scripts for S3 file uploads via GCP ServiceAccount OIDC federated identity.
 
+## `Handwrite.io API`
+
+### [07/07/2026]
+
+* Adds `Handwrite.io API` reference, covering the `handwriting`, `stationery`, `send`, and `order` endpoints.
+* Includes the `Handwrite.io API` Postman collection under `handwrite-api/resources/`.
+* Root `README.md` updated to link to the new API reference.
+
 ## `Customer Data & Targeting API`
 
 ### [05/06/2026]
