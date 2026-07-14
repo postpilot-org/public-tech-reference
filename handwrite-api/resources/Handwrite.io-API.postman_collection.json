@@ -1,0 +1,283 @@
+{
+  "info": {
+    "_postman_id": "332ae154-7f36-4657-bcee-edfdd7d1e05d",
+    "name": "Handwrite.io API",
+    "description": "Postman collection for the Handwrite.io API (v1).\n\n**Base URL:** `https://api.handwrite.io/v1`\n\n**Authentication:** All requests require an `Authorization` header set to your API key. Keys begin with `test_hw` (testing) or `live_hw` (production).\n\n**Rate limit:** 60 requests/minute. Exceeding returns HTTP 429. Rate-limit info is returned in the `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers.\n\nDocs: https://documentation.handwrite.io/",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53832994",
+    "_collection_link": "https://go.postman.co/collection/53832994-332ae154-7f36-4657-bcee-edfdd7d1e05d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get Handwritings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/handwriting",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "handwriting"
+          ]
+        },
+        "description": "Returns the list of available handwriting styles for your account. Use a returned `_id` as the `handwriting` value when sending a letter."
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/handwriting",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "handwriting"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "Text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"_id\": \"5db6f0724cc1751452c5ae8e\",\n    \"name\": \"Jeremy\",\n    \"preview_url\": \"http://res.cloudinary.com/handwrite/image/upload/v1572270190/cards/wkwtnagsty79e0tlbiad.jpg\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Get Stationery",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/stationery",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "stationery"
+          ]
+        },
+        "description": "Returns the list of available stationery/cards for your account. Use a returned `_id` as the `card` value when sending a letter."
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stationery",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stationery"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "Text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"_id\": \"5db6f1854cc1751452c5ae93\",\n    \"name\": \"Classic White\",\n    \"preview_url\": \"http://res.cloudinary.com/handwrite/image/upload/v1572270464/cards/yflijfai9wm38czthluk.jpg\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Send a Letter",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Hey dude,\\nIt was great meeting you last week at the party. We'd love to have you back at the next one!\\n\\nBest,\\n-Jackie\",\n  \"handwriting\": \"5db6f0724cc1751452c5ae8e\",\n  \"card\": \"5db6f0724cc1751452c5ae8e\",\n  \"recipients\": [\n    {\n      \"firstName\": \"The\",\n      \"lastName\": \"Dude\",\n      \"company\": \"Unemployed\",\n      \"street1\": \"25 Main Street\",\n      \"city\": \"Los Angeles\",\n      \"state\": \"CA\",\n      \"zip\": \"90210\"\n    }\n  ],\n  \"from\": {\n    \"firstName\": \"Jackie\",\n    \"lastName\": \"Treehorn\",\n    \"street1\": \"1 Random Street\",\n    \"street2\": \"Apt 33A\",\n    \"city\": \"Malibu\",\n    \"state\": \"CA\",\n    \"zip\": \"90263\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/send",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "send"
+          ]
+        },
+        "description": "Sends one or more handwritten letters.\n\n**Required fields:** `message` (max 320 chars), `handwriting` (ID), `card` (ID), `recipients` (array of 1-10 recipient objects).\n\n**Recipient required fields:** `street1`, `city`, `state` (2-letter, capitalized), `zip` (5-digit). Optional: `firstName`, `lastName`, `company`, `street2`.\n\n**Optional `from` object:** return address (`firstName`, `lastName`, `street1`, `street2`, `city`, `state`, `zip`).\n\n**Batch mode:** the endpoint also accepts an array of message objects (max 1,000 orders per request)."
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hey dude,\",\n  \"handwriting\": \"5db6f0724cc1751452c5ae8e\",\n  \"card\": \"5db6f0724cc1751452c5ae8e\",\n  \"recipients\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "send"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "Text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"_id\": \"5dba45e8f2b173cb5dff0300\",\n    \"message\": \"Hey dude,\\nIt was great meeting you last week at the party. We'd love to have you back at the next one!\\n\\nBest,\\n-Jackie\",\n    \"to\": {\n      \"firstName\": \"The\",\n      \"lastName\": \"Dude\",\n      \"company\": \"Unemployed\",\n      \"street1\": \"25 Main Street\",\n      \"city\": \"Los Angeles\",\n      \"state\": \"CA\",\n      \"zip\": \"90210\"\n    },\n    \"from\": {\n      \"firstName\": \"Jackie\",\n      \"lastName\": \"Treehorn\",\n      \"street1\": \"1 Random Street\",\n      \"street2\": \"Apt 33A\",\n      \"city\": \"Malibu\",\n      \"state\": \"CA\",\n      \"zip\": \"90263\"\n    },\n    \"status\": \"processing\",\n    \"handwriting\": \"5db6f0724cc1751452c5ae8e\",\n    \"card\": \"5db6f0724cc1751452c5ae8e\",\n    \"createdAt\": \"2019-10-31T02:24:40.648Z\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Get an Order",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/order/{{orderId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "order",
+            "{{orderId}}"
+          ]
+        },
+        "description": "Retrieves a single order by its ID.\n\n**URL param:** `orderId` (set the `orderId` collection variable).\n\n**Status values:** `processing`, `written` (not yet delivered), `complete` (mailed), `problem` (technical issue), `cancelled`."
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/order/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "Text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"_id\": \"5f44086e69217700172ac110\",\n  \"message\": \"Hey there, hope all is well!\",\n  \"status\": \"complete\",\n  \"handwriting\": \"5dc30652bc08d20016f1ec33\",\n  \"card\": \"5f33fde848cc140017f0364a\",\n  \"createdAt\": \"2020-08-24T18:35:26.686Z\",\n  \"environment\": \"live\",\n  \"to\": {\n    \"firstName\": \"Jamie\",\n    \"lastName\": \"Stockton\",\n    \"company\": \"Stockton Lumber\",\n    \"street1\": \"8284 Random Road\",\n    \"city\": \"Sarasota\",\n    \"state\": \"FL\",\n    \"zip\": \"34240\"\n  },\n  \"from\": {\n    \"firstName\": \"Terrance\",\n    \"lastName\": \"McGhee\",\n    \"street1\": \"293 Hungerford Drive\",\n    \"street2\": \"\",\n    \"city\": \"Rockville\",\n    \"state\": \"MD\",\n    \"zip\": \"20850\"\n  },\n  \"proofs\": [\n    {\n      \"job_type\": \"card\",\n      \"image_url\": \"https://s3.us-east-2.amazonaws.com/any-random-image.jpg\"\n    },\n    {\n      \"job_type\": \"envelope\",\n      \"image_url\": \"https://s3.us-east-2.amazonaws.com/another-random-image.jpg\"\n    }\n  ]\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.handwrite.io/v1"
+    },
+    {
+      "key": "apiKey",
+      "value": "test_hw_your_api_key_here"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "handwritingId",
+      "value": ""
+    },
+    {
+      "key": "cardId",
+      "value": ""
+    }
+  ]
+}

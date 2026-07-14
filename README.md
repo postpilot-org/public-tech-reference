@@ -7,3 +7,4 @@ integrations, etc.
 
 * [Data Ingestion Guide](./data-ingestion-guide/README.md)
 * [Customer Data & Targeting API](./customer-data-api/README.md)
+* [Handwrite.io API](./handwrite-api/README.md)
