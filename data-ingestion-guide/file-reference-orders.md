@@ -21,7 +21,7 @@ Example order JSON object
         "line2": "Apt 4B",
         "city": "Irvine",
         "state": "CA",
-        "postal_code": "92618-1234"
+        "postal_code": "92618-1234",
         "country_code": "US"
     },
     "billing_address": {
@@ -65,8 +65,8 @@ Top-level:
 | Field | Type              | Required | Notes                                                                                |
 |---|-------------------|---|--------------------------------------------------------------------------------------|
 | `id` | string            | ✅ Required | Unique Order Id                                                                      |
-| `customer_id` | string            | ✅ Required | Unique Customer Id                                                                   |
-| `total_price` | number            | ✅ Required | Total order price                                                                    |
+| `customer_id` | string            | ✅ Required | Exact `id` of the customer in the customers file, including any hashing             |
+| `total_price` | number            | ✅ Required | Total order price, greater than 0. Leave refunds, returns and $0 orders out          |
 | `currency` | string            | ✅ Required | ISO currency code, e.g. `USD`                                                        |
 | `email` | string            | ✅ Required | Email address                                                                        |
 | `coupon_codes` | array\<string\>   | ⬜ Optional | Coupon codes if used                                                                 |
@@ -99,12 +99,12 @@ Address Type:
 | `city` | string | ✅ Required | Primary address city of the customer                                                        |
 | `state` | string | ✅ Required | Primary address state of the customer                                                       |
 | `postal_code` | string | ✅ Required | Primary address postal_code of the customer                                                 |
-| `country_code` | string | ✅ Required | ISO 3166, Primary address country_code of the customer                                      |
+| `country_code` | string | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer    |
 
 
 ** Order JSONL file example**
 
 ```jsonl
-{"id":"ord_9001","customer_id":"cust_1001","total_price":129.99,"currency":"USD","email":"jane.doe@example.com","coupon_codes":["WELCOME10"],"shipping_address": {"id":"cust_1001","full_name":"JaneDoe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt4B","city":"Irvine","state":"CA","postal_code":"92618-1234"},"billing_address":{"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234"},"browser_ip":"203.0.113.42","line_items":[{"id":"li_1","name":"T-Shirt","price":29.99,"quantity":2},{"id":"li_2","name":"Jeans","price":70.01,"quantity":1}],"created_at":"2025-03-27T09:55:00Z","updated_at":"2025-03-27T10:10:00Z"}
-{"id":"ord_9002","customer_id":"cust_1002","total_price":59.98,"currency":"USD","email":"john.smith@example.com","coupon_codes":[],,"shipping_address": {"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234"},"billing_address": {"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234"},"browser_ip":"198.51.100.23","line_items":[{"id":"li_3","name":"Hat","price":29.99,"quantity":2}],"created_at":"2025-03-27T09:58:00Z","updated_at":"2025-03-27T09:58:00Z"}
+{"id":"ord_9001","customer_id":"cust_1001","total_price":129.99,"currency":"USD","email":"jane.doe@example.com","coupon_codes":["WELCOME10"],"shipping_address":{"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234","country_code":"US"},"billing_address":{"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234","country_code":"US"},"line_items":[{"id":"li_1","name":"T-Shirt","price":29.99,"quantity":2},{"id":"li_2","name":"Jeans","price":70.01,"quantity":1}],"created_at":"2025-03-27T09:55:00Z","updated_at":"2025-03-27T10:10:00Z"}
+{"id":"ord_9002","customer_id":"cust_1002","total_price":59.98,"currency":"USD","email":"john.smith@example.com","coupon_codes":[],"shipping_address":{"id":"cust_1002","full_name":"John Smith","email":"john.smith@example.com","line1":"456 Oak Ave","city":"Austin","state":"TX","postal_code":"73301","country_code":"US"},"billing_address":{"id":"cust_1002","full_name":"John Smith","email":"john.smith@example.com","line1":"456 Oak Ave","city":"Austin","state":"TX","postal_code":"73301","country_code":"US"},"line_items":[{"id":"li_3","name":"Hat","price":29.99,"quantity":2}],"created_at":"2025-03-27T09:58:00Z","updated_at":"2025-03-27T09:58:00Z"}
 ```
