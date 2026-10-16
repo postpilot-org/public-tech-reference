@@ -321,7 +321,7 @@ def name_issues(address, prefix):
     if GATE_NAME_RE.search(name):
         return
     if UNICODE_NAME_RE.search(name):
-        yield "full_name", "has accented or non-Latin letters, which are dropped unless `{}company` is set".format(prefix)
+        yield "full_name", "must use plain A-Z letters (accents and non-Latin characters aren't supported), or set `{}company`".format(prefix)
     else:
         yield "full_name", "needs a first and last name, or set `{}company`".format(prefix)
 

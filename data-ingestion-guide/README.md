@@ -52,7 +52,8 @@ A record is skipped if:
 A record is also skipped if its mailing address (the customer record, or the order's `shipping_address`) fails these:
 
 * `line1` is blank.
-* `company` is blank and `full_name` isn't a first and last name.
+* `company` is blank and `full_name` isn't a first and last name in plain A-Z letters. Accents and non-Latin
+  characters aren't supported, e.g. `José García` is skipped unless `company` is set.
 * `full_name` or `company` is over 40 characters, or `line1`, `line2`, `city` or `state` is over 200.
 * US addresses: `city` or `state` is blank, `state` isn't a 2-letter code like `CA`, `postal_code` isn't a 5-digit ZIP
   like `92618` or `92618-1234` (or is `00000`), `line1` is only dashes, or `line1` or `line2` is over 64 characters.
