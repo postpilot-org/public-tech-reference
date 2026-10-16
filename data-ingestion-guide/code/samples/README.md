@@ -27,7 +27,7 @@ python3 validate-feed.py samples/customers_with_errors.jsonl samples/orders_with
 | 15 | Unescaped `\` in `line1` | Unreadable |
 | 16 | Trailing comma | Unreadable |
 | 17 | Unknown field `Tags` | Note |
-| 18 | Blank `line1` | Warning |
+| 18 | Blank `line1` | Skipped |
 | 19 | `metadata` is a string | Unreadable |
 
 ## orders_with_errors.jsonl

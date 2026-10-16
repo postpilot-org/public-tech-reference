@@ -97,8 +97,8 @@ Address Type:
 | `line1` | string | ✅ Required | Primary address line1 of the customer                                                       |
 | `line2` | string | ⬜ Optional | Primary address line2 of the customer                                                       |
 | `city` | string | ✅ Required | Primary address city of the customer                                                        |
-| `state` | string | ✅ Required | Primary address state of the customer                                                       |
-| `postal_code` | string | ✅ Required | Primary address postal_code of the customer                                                 |
+| `state` | string | ✅ Required | Primary address state of the customer. 2-letter code for US addresses, e.g. `CA`            |
+| `postal_code` | string | ✅ Required | Primary address postal_code of the customer. US: `92618` or `92618-1234`                    |
 | `country_code` | string | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer    |
 
 

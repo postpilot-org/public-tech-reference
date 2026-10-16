@@ -41,6 +41,12 @@ TIMESTAMP_RE = re.compile(
     r"(\s*(?:Z|UTC|[+-]\d{1,2}(?::?\d{2})?))?$"
 )
 OLDEST_PLAUSIBLE_YEAR = 1990
+# Mailing-address rules applied after loading (they drop rows the first pass accepted). The name check is ASCII on
+# purpose: the pipeline's \w only matches A-Z, 0-9 and _, so accented and non-Latin names fail it today.
+GATE_NAME_RE = re.compile(r"(\w+\.*\s+\w+)|(^Redacted$)", re.ASCII)
+UNICODE_NAME_RE = re.compile(r"\w+\.*\s+\w+")
+US_ZIP_RE = re.compile(r"^[0-9]{5}(-[0-9]{4})?$")
+UK_POSTCODE_RE = re.compile(r"^[A-Z0-9]{2,4}\s?[A-Z0-9]{3}$", re.ASCII)
 
 ADDRESS_FIELDS = OrderedDict([
     ("id", "string"), ("full_name", "string"), ("company", "string"), ("email", "string"),
@@ -268,12 +274,22 @@ def as_id(value):
     return str(value)
 
 
-def check_required_string(record, field, label, report, line_no):
+def text(record, field):
     value = record.get(field)
-    if value is None:
-        report.add("error", "`{}` is missing or null".format(label), line_no)
+    return "" if value is None else str(value)
+
+
+def check_present(record, field, label, report, line_no):
+    if record.get(field) is not None:
+        return True
+    report.add("error", "`{}` is missing or null".format(label), line_no)
+    return False
+
+
+def check_required_string(record, field, label, report, line_no):
+    if not check_present(record, field, label, report, line_no):
         return False
-    if is_blank(value):
+    if is_blank(record.get(field)):
         report.add("warning", "`{}` is blank (accepted, but unusable)".format(label), line_no)
     return True
 
@@ -296,6 +312,66 @@ def check_country(value, label, report, line_no):
         report.add("error", "`{}` must be a 2-letter uppercase ISO 3166 code like US".format(label), line_no)
         return False
     return True
+
+
+def name_issues(address, prefix):
+    if text(address, "company").strip():
+        return
+    name = text(address, "full_name").replace("\0", "")
+    if GATE_NAME_RE.search(name):
+        return
+    if UNICODE_NAME_RE.search(name):
+        yield "full_name", "has accented or non-Latin letters, which are dropped unless `{}company` is set".format(prefix)
+    else:
+        yield "full_name", "needs a first and last name, or set `{}company`".format(prefix)
+
+
+def us_issues(address):
+    for field in ("city", "state"):
+        if address.get(field) is not None and not text(address, field).strip():
+            yield field, "is blank, required for US addresses"
+    if len(text(address, "state")) > 2:
+        yield "state", "must be a 2-letter code like CA for US addresses"
+    if re.match(r"^-+$", text(address, "line1")):
+        yield "line1", "is only dashes"
+    if address.get("postal_code") is None:
+        return
+    zip_code = text(address, "postal_code")
+    if not US_ZIP_RE.match(zip_code):
+        yield "postal_code", "must be a 5-digit ZIP like 92618 or 92618-1234 for US addresses"
+    elif zip_code.startswith("00000"):
+        yield "postal_code", "is 00000"
+
+
+def uk_issues(address):
+    if address.get("postal_code") is not None and not UK_POSTCODE_RE.match(text(address, "postal_code").upper()):
+        yield "postal_code", "is not a valid UK postcode like SW1A 1AA"
+
+
+def mailing_address_issues(address, prefix, check_name):
+    country = text(address, "country_code").upper()
+    street_limit = 64 if country == "US" else 200
+    if check_name:
+        yield from name_issues(address, prefix)
+    if address.get("line1") is not None and not text(address, "line1").strip():
+        yield "line1", "is blank"
+    limits = (("full_name", 40), ("company", 40), ("line1", street_limit), ("line2", street_limit),
+              ("city", 200), ("state", 200))
+    for field, limit in limits:
+        if len(text(address, field).replace("\0", "")) > limit:
+            yield field, "is longer than {} characters".format(limit)
+    if country == "US":
+        yield from us_issues(address)
+    if country in ("UK", "GB"):
+        yield from uk_issues(address)
+
+
+def check_mailing_address(address, prefix, report, line_no, check_name=True):
+    ok = True
+    for field, problem in mailing_address_issues(address, prefix, check_name):
+        report.add("error", "`{}{}` {}".format(prefix, field, problem), line_no)
+        ok = False
+    return ok
 
 
 def check_dates(record, report, line_no, stats, now):
@@ -330,34 +406,40 @@ def check_dates(record, report, line_no, stats, now):
 
 
 def validate_customer(record, report, line_no, stats, now):
-    ok = True
-    for field in ("id", "line1", "city", "state", "postal_code"):
-        ok = check_required_string(record, field, field, report, line_no) and ok
+    ok = check_required_string(record, "id", "id", report, line_no)
+    for field in ("line1", "city", "state", "postal_code"):
+        ok = check_present(record, field, field, report, line_no) and ok
     name = record.get("full_name")
+    name_ok = False
     if name is None:
         report.add("error", "`full_name` is missing or null", line_no)
-        ok = False
     elif not isinstance(name, str) or not valid_full_name(name):
         report.add("error", "`full_name` must be 4+ characters of letters, spaces, apostrophes, hyphens or periods", line_no)
-        ok = False
+    else:
+        name_ok = True
+    ok = name_ok and ok
     ok = check_email(record.get("email"), "email", report, line_no) and ok
     ok = check_country(record.get("country_code"), "country_code", report, line_no) and ok
+    ok = check_mailing_address(record, "", report, line_no, check_name=name_ok) and ok
     ok = check_dates(record, report, line_no, stats, now) and ok
     return ok
 
 
-def validate_address(address, label, report, line_no):
+def validate_address(address, label, report, line_no, mailing):
+    # Only the shipping address goes through the mailing-address rules, billing just needs the first pass.
     if address is None:
         report.add("error", "`{}` is missing or null".format(label), line_no)
         return False
     ok = True
     for field in ("line1", "city", "state", "postal_code"):
-        ok = check_required_string(address, field, label + "." + field, report, line_no) and ok
+        ok = check_present(address, field, label + "." + field, report, line_no) and ok
     ok = check_country(address.get("country_code"), label + ".country_code", report, line_no) and ok
     ok = check_email(address.get("email"), label + ".email", report, line_no) and ok
-    for field in ("id", "full_name"):
+    for field in ("id",) if mailing else ("id", "full_name"):
         if address.get(field) is None:
             report.add("warning", "`{}.{}` is missing (required by the documentation)".format(label, field), line_no)
+    if mailing:
+        ok = check_mailing_address(address, label + ".", report, line_no) and ok
     return ok
 
 
@@ -379,8 +461,8 @@ def validate_order(record, report, line_no, stats, now):
     elif total is not None and decimals(record["total_price"]) > 2:
         report.add("warning", "`total_price` has more than 2 decimal places", line_no)
 
-    for label in ("shipping_address", "billing_address"):
-        ok = validate_address(record.get(label), label, report, line_no) and ok
+    ok = validate_address(record.get("shipping_address"), "shipping_address", report, line_no, mailing=True) and ok
+    ok = validate_address(record.get("billing_address"), "billing_address", report, line_no, mailing=False) and ok
 
     items = record.get("line_items")
     if not items:
