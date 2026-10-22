@@ -38,15 +38,20 @@ CURRENCY_RE = re.compile(r"^[A-Z]{3}$")
 TIMESTAMP_RE = re.compile(
     r"^(\d{4})-(\d{1,2})-(\d{1,2})"
     r"(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2})(?:\.\d{1,6})?)?)?"
-    r"(\s*(?:Z|UTC|[+-]\d{1,2}(?::?\d{2})?))?$"
+    r"(\s*(?:Z|UTC|[+-]\d{1,2}(?::?\d{2})?))?$",
+    re.ASCII,
 )
 OLDEST_PLAUSIBLE_YEAR = 1990
 # Mailing-address rules applied after loading (they drop rows the first pass accepted). The name check is ASCII on
-# purpose: the pipeline's \w only matches A-Z, 0-9 and _, so accented and non-Latin names fail it today.
-GATE_NAME_RE = re.compile(r"(\w+\.*\s+\w+)|(^Redacted$)", re.ASCII)
-UNICODE_NAME_RE = re.compile(r"\w+\.*\s+\w+")
+# purpose: the pipeline's \w only matches A-Z, 0-9 and _, so accented and non-Latin names fail it today. Its \s is
+# ASCII too, so a non-breaking space between names fails.
+GATE_NAME_RE = re.compile(r"(\w+\.*[\t\n\f\r ]+\w+)|(^Redacted$)", re.ASCII)
+UNICODE_NAME_RE = re.compile(r"\w+\.*[\t\n\f\r ]+\w+")
 US_ZIP_RE = re.compile(r"^[0-9]{5}(-[0-9]{4})?$")
-UK_POSTCODE_RE = re.compile(r"^[A-Z0-9]{2,4}\s?[A-Z0-9]{3}$", re.ASCII)
+UK_POSTCODE_RE = re.compile(r"^[A-Z0-9]{2,4}[\t\n\f\r ]?[A-Z0-9]{3}$", re.ASCII)
+# Plain decimal only: float() alone would accept "1_000", "inf" and non-ASCII digits.
+DECIMAL_RE = re.compile(r"[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?", re.ASCII)
+INTEGER_RE = re.compile(r"-?\d+", re.ASCII)
 
 ADDRESS_FIELDS = OrderedDict([
     ("id", "string"), ("full_name", "string"), ("company", "string"), ("email", "string"),
@@ -208,7 +213,7 @@ def check_types(record, schema, path, report, line_no):
                 report.add("bad_line", "`{}` must be a whole number, got a decimal".format(label), line_no)
                 loadable = False
             elif isinstance(value, str):
-                if not re.match(r"^-?\d+$", value.strip()):
+                if not INTEGER_RE.fullmatch(value.strip()):
                     report.add("bad_line", "`{}` must be a whole number, got non-numeric text".format(label), line_no)
                     loadable = False
                 else:
@@ -222,6 +227,8 @@ def parse_number(value):
     if isinstance(value, (int, float)):
         return float(value)
     if isinstance(value, str):
+        if not DECIMAL_RE.fullmatch(value.strip()):
+            return None
         try:
             number = float(value.strip())
         except ValueError:
