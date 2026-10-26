@@ -80,3 +80,9 @@ Exit code `0` means no errors. Pass a customers and orders file together to also
 `customer_id` matches a customer `id`.
 
 To see what it reports, run it on the fake files in [code/samples](./code/samples/README.md).
+
+### JSON Schema
+
+[schemas/customers.schema.json](./schemas/customers.schema.json) and [schemas/orders.schema.json](./schemas/orders.schema.json)
+describe one line of each file (JSON Schema 2020-12). They cover the per-record rules above and work with any JSON
+Schema validator. File-level checks (bad-line count, duplicate IDs, `customer_id` matching) need `validate-feed.py`.

@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/postpilot-org/public-tech-reference/blob/main/data-ingestion-guide/schemas/customers.schema.json",
+  "title": "Customer record",
+  "description": "One line of a customers_YYYYMMDD.jsonl file. Records that fail these rules are skipped by the pipeline, except an e-mail address in an ID field: those load, but must be fixed.",
+  "type": "object",
+  "required": ["id", "full_name", "email", "line1", "city", "state", "postal_code", "country_code", "created_at", "updated_at"],
+  "properties": {
+    "id": {
+      "description": "Your unique, stable customer ID. Never an e-mail address: hash it (any method) and send the same value as customer_id in the orders file.",
+      "type": ["string", "integer"],
+      "not": { "type": "string", "pattern": "@" },
+      "examples": ["cust_1001"]
+    },
+    "full_name": {
+      "description": "First and last name, 4 to 40 characters: letters, spaces, apostrophes, hyphens and periods. Without company set, it must be plain A-Z letters (no accents or non-Latin characters).",
+      "type": "string",
+      "maxLength": 40,
+      "minLength": 4,
+      "not": { "pattern": "[0-9_!\"#$%&()*+,/:;<=>?@\\[\\]\\\\^`{|}~]" },
+      "examples": ["Jane Doe"]
+    },
+    "company": {
+      "description": "Company name, up to 40 characters. When set, the plain A-Z name rule doesn't apply.",
+      "type": ["string", "null"],
+      "maxLength": 40,
+      "examples": ["Acme Co"]
+    },
+    "email": {
+      "description": "The customer's e-mail address, unhashed.",
+      "type": "string",
+      "examples": ["jane.doe@example.com"]
+    },
+    "line1": {
+      "description": "Street address, not blank. Up to 200 characters.",
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "\\S",
+      "examples": ["123 Main St"]
+    },
+    "line2": {
+      "description": "Apartment, suite or unit. Up to 200 characters.",
+      "type": ["string", "null"],
+      "maxLength": 200,
+      "examples": ["Apt 4B"]
+    },
+    "city": {
+      "description": "City, up to 200 characters.",
+      "type": "string",
+      "maxLength": 200,
+      "examples": ["Irvine"]
+    },
+    "state": {
+      "description": "State, province or region, up to 200 characters.",
+      "type": "string",
+      "maxLength": 200,
+      "examples": ["CA"]
+    },
+    "postal_code": {
+      "description": "ZIP or postal code.",
+      "type": "string",
+      "examples": ["92618-1234"]
+    },
+    "country_code": {
+      "description": "ISO 3166-1 alpha-2 country code, uppercase.",
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "examples": ["US"]
+    },
+    "created_at": {
+      "description": "When the customer was created, ISO 8601.",
+      "$ref": "#/$defs/timestamp",
+      "examples": ["2024-11-15T09:12:00Z"]
+    },
+    "updated_at": {
+      "description": "When the customer last changed, ISO 8601. Change it whenever the address or e-mail changes.",
+      "$ref": "#/$defs/timestamp",
+      "examples": ["2025-03-27T10:15:00Z"]
+    },
+    "metadata": {
+      "description": "Optional extras.",
+      "type": ["object", "null"],
+      "properties": {
+        "tags": {
+          "description": "Custom tags you can filter segments on.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "examples": [{ "tags": ["PREMIUM"] }]
+    }
+  },
+  "allOf": [
+    {
+      "description": "Without a company",
+      "if": { "required": ["company"], "properties": { "company": { "type": "string", "pattern": "\\S" } } },
+      "else": {
+        "properties": {
+          "full_name": {
+            "description": "Needs a first and last name in plain A-Z letters.",
+            "pattern": "([A-Za-z0-9_]+\\.*[\\t\\n\\f\\r ]+[A-Za-z0-9_]+)|(^Redacted$)"
+          }
+        }
+      }
+    },
+    {
+      "description": "US addresses",
+      "if": { "required": ["country_code"], "properties": { "country_code": { "const": "US" } } },
+      "then": {
+        "properties": {
+          "line1": { "description": "Up to 64 characters, not only dashes.", "maxLength": 64, "not": { "pattern": "^-+$" } },
+          "line2": { "description": "Up to 64 characters.", "maxLength": 64 },
+          "city": { "description": "Not blank.", "pattern": "\\S" },
+          "state": { "description": "2-letter code like CA.", "pattern": "\\S", "maxLength": 2 },
+          "postal_code": { "description": "5 or 9 digit ZIP like 92618 or 92618-1234, not 00000.", "pattern": "^[0-9]{5}(-[0-9]{4})?$", "not": { "pattern": "^00000" } }
+        }
+      }
+    },
+    {
+      "description": "UK addresses",
+      "if": { "required": ["country_code"], "properties": { "country_code": { "enum": ["GB", "UK"] } } },
+      "then": {
+        "properties": {
+          "postal_code": { "description": "UK postcode like SW1A 1AA.", "pattern": "^[A-Za-z0-9]{2,4}[\\t\\n\\f\\r ]?[A-Za-z0-9]{3}$" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "timestamp": {
+      "title": "ISO 8601 date",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{1,2}-\\d{1,2}([ T]\\d{1,2}:\\d{1,2}(:\\d{1,2}(\\.\\d{1,6})?)?)?(\\s*(Z|UTC|[+-]\\d{1,2}(:?\\d{2})?))?$"
+    }
+  },
+  "examples": [
+    {
+      "id": "cust_1001",
+      "full_name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "line1": "123 Main St",
+      "line2": "Apt 4B",
+      "city": "Irvine",
+      "state": "CA",
+      "postal_code": "92618-1234",
+      "country_code": "US",
+      "created_at": "2024-11-15T09:12:00Z",
+      "updated_at": "2025-03-27T10:15:00Z",
+      "metadata": { "tags": ["PREMIUM"] }
+    }
+  ]
+}
