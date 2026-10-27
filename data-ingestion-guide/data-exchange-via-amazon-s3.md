@@ -157,3 +157,9 @@ can be easily modified with customer-specific parameters for initial testing pur
 
 * [Upload via AWS Cross-Account Access](./code/aws-cross-account.example.rb)
 * [Upload via GCP Federated Identity](./code/gcp-federated-id.example.rb)
+
+### Validate Before Uploading
+
+* [validate-feed.py](./code/validate-feed.py) checks `customers` and `orders` files locally against PostPilot's
+  [validation rules](./README.md#validation-rules) before upload. No dependencies, no network calls, no field values
+  in its output.
