@@ -27,8 +27,9 @@
       "examples": ["Acme Co"]
     },
     "email": {
-      "description": "The customer's e-mail address, unhashed.",
+      "description": "The customer's e-mail address, unhashed, like jane.doe@example.com.",
       "type": "string",
+      "pattern": "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}$",
       "examples": ["jane.doe@example.com"]
     },
     "line1": {
@@ -129,6 +130,7 @@
   "$defs": {
     "timestamp": {
       "title": "ISO 8601 date",
+      "description": "ISO 8601 date/time like 2025-03-27T10:15:00Z.",
       "type": "string",
       "pattern": "^\\d{4}-\\d{1,2}-\\d{1,2}([ T]\\d{1,2}:\\d{1,2}(:\\d{1,2}(\\.\\d{1,6})?)?)?(\\s*(Z|UTC|[+-]\\d{1,2}(:?\\d{2})?))?$"
     }
