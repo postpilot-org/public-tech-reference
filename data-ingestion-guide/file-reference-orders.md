@@ -62,47 +62,46 @@ Example order JSON object
 
 Top-level:
 
-| Field | Type              | Required | Notes                                                                                |
-|---|-------------------|---|--------------------------------------------------------------------------------------|
-| `id` | string            | ✅ Required | Unique Order Id                                                                      |
-| `customer_id` | string            | ✅ Required | Exact `id` of the customer in the customers file, including any hashing             |
-| `total_price` | number            | ✅ Required | Total order price, greater than 0. Leave refunds, returns and $0 orders out          |
-| `currency` | string            | ✅ Required | ISO currency code, e.g. `USD`                                                        |
-| `email` | string            | ✅ Required | Email address                                                                        |
-| `coupon_codes` | array\<string\>   | ⬜ Optional | Coupon codes if used                                                                 |
+| Field              | Type              | Required    | Notes                                                                                |
+| ------------------ | ----------------- | ----------- | ------------------------------------------------------------------------------------ |
+| `id`               | string            | ✅ Required | Unique Order Id                                                                      |
+| `customer_id`      | string            | ✅ Required | Exact `id` of the customer in the customers file, including any hashing              |
+| `total_price`      | number            | ✅ Required | Total order price, greater than 0. Leave refunds, returns and $0 orders out          |
+| `currency`         | string            | ✅ Required | ISO currency code, e.g. `USD`                                                        |
+| `email`            | string            | ✅ Required | Email address                                                                        |
+| `coupon_codes`     | array\<string\>   | ⬜ Optional | Coupon codes if used                                                                 |
 | `shipping_address` | JSON              | ✅ Required | Shipping address                                                                     |
-| `billing_address` | JSON              | ✅ Required | Billing Address                                                                      |
-| `line_items` | array\<LineItem\> | ✅ Required | Order line item list                                                                 |
-| `created_at` | string            | ✅ Required | ISO 8601 Order creation date                                                                            |
-| `updated_at` | string            | ✅ Required | ISO 8601 — must change whenever any attribute of the order or its line items changes |
-| `metadata` | Map<String,Any>   | ⬜ Optional | Generic Field for storing tags or custom variables                                                           |
+| `billing_address`  | JSON              | ✅ Required | Billing Address                                                                      |
+| `line_items`       | array\<LineItem\> | ✅ Required | Order line item list                                                                 |
+| `created_at`       | string            | ✅ Required | ISO 8601 Order creation date                                                         |
+| `updated_at`       | string            | ✅ Required | ISO 8601 — must change whenever any attribute of the order or its line items changes |
+| `metadata`         | Map<String,Any>   | ⬜ Optional | Generic Field for storing tags or custom variables                                   |
 
 LineItem Type:
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `id` | string | ✅ Required |Product Id |
-| `name` | string | ✅ Required |Product Name |
-| `price` | number | ✅ Required | Unit price with 2 decimal places |
-| `quantity` | integer | ✅ Required |Number of items in the line item |
+| Field      | Type    | Required    | Notes                            |
+| ---------- | ------- | ----------- | -------------------------------- |
+| `id`       | string  | ✅ Required | Product Id                       |
+| `name`     | string  | ✅ Required | Product Name                     |
+| `price`    | number  | ✅ Required | Unit price with 2 decimal places |
+| `quantity` | integer | ✅ Required | Number of items in the line item |
 
 Address Type:
 
-| Field | Type | Required | Notes                                                                                       |
-|---|---|---|---------------------------------------------------------------------------------------------|
-| `id` | string | ✅ Required | Your unique, stable customer ID                                                             |
-| `full_name` | string | ✅ Required | Full name                                                                                   |
-| `company` | string | ⬜ Optional | Company name if present                                                                     |
-| `email` | string | ✅ Required | Primary email address of the customer                                                       |
-| `line1` | string | ✅ Required | Primary address line1 of the customer                                                       |
-| `line2` | string | ⬜ Optional | Primary address line2 of the customer                                                       |
-| `city` | string | ✅ Required | Primary address city of the customer                                                        |
-| `state` | string | ✅ Required | Primary address state of the customer. 2-letter code for US addresses, e.g. `CA`            |
-| `postal_code` | string | ✅ Required | Primary address postal_code of the customer. US: `92618` or `92618-1234`                    |
-| `country_code` | string | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer    |
+| Field          | Type   | Required    | Notes                                                                                   |
+| -------------- | ------ | ----------- | --------------------------------------------------------------------------------------- |
+| `id`           | string | ✅ Required | Your unique, stable customer ID                                                         |
+| `full_name`    | string | ✅ Required | Full name                                                                               |
+| `company`      | string | ⬜ Optional | Company name if present                                                                 |
+| `email`        | string | ✅ Required | Primary email address of the customer                                                   |
+| `line1`        | string | ✅ Required | Primary address line1 of the customer                                                   |
+| `line2`        | string | ⬜ Optional | Primary address line2 of the customer                                                   |
+| `city`         | string | ✅ Required | Primary address city of the customer                                                    |
+| `state`        | string | ✅ Required | Primary address state of the customer. 2-letter code for US addresses, e.g. `CA`        |
+| `postal_code`  | string | ✅ Required | Primary address postal_code of the customer. US: `92618` or `92618-1234`                |
+| `country_code` | string | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer |
 
-
-** Order JSONL file example**
+**Order JSONL file example**
 
 ```jsonl
 {"id":"ord_9001","customer_id":"cust_1001","total_price":129.99,"currency":"USD","email":"jane.doe@example.com","coupon_codes":["WELCOME10"],"shipping_address":{"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234","country_code":"US"},"billing_address":{"id":"cust_1001","full_name":"Jane Doe","email":"jane.doe@example.com","line1":"123 Main St","line2":"Apt 4B","city":"Irvine","state":"CA","postal_code":"92618-1234","country_code":"US"},"line_items":[{"id":"li_1","name":"T-Shirt","price":29.99,"quantity":2},{"id":"li_2","name":"Jeans","price":70.01,"quantity":1}],"created_at":"2025-03-27T09:55:00Z","updated_at":"2025-03-27T10:10:00Z"}

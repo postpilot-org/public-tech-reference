@@ -26,23 +26,22 @@ Each line in the **customer** JSONL file is a single customer object.
 
 **Customer fields**
 
-| Field | Type | Required | Notes                                                                                       |
-|---|---|---|---------------------------------------------------------------------------------------------|
-| `id` | string | ✅ Required | Your unique, stable customer ID, e.g. a numeric account ID sent as a string. Must not contain PII: if it's an email address or other personal data, hash it (any method) |
-| `full_name` | string | ✅ Required | First and last name, 4+ characters: plain A-Z letters, spaces, apostrophes, hyphens, periods. Accents and non-Latin characters aren't supported unless `company` is set |
-| `company` | string | ⬜ Optional | Company name if present                                                                     |
-| `email` | string | ✅ Required | Primary email address of the customer, unhashed                                             |
-| `line1` | string | ✅ Required | Primary address line1 of the customer                                                       |
-| `line2` | string | ⬜ Optional | Primary address line2 of the customer                                                       |
-| `city` | string | ✅ Required | Primary address city of the customer                                                        |
-| `state` | string | ✅ Required | Primary address state of the customer. 2-letter code for US addresses, e.g. `CA`            |
-| `postal_code` | string | ✅ Required | Primary address postal_code of the customer. US: `92618` or `92618-1234`                    |
-| `country_code` | string | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer    |
-| `created_at` | string | ✅ Required | ISO 8601 — Customer creation date                                                           |
-| `updated_at` | string | ✅ Required | ISO 8601 — Customer update date. Any address, email update should trigger this field change |
-| `metadata` | object | ⬜ Optional |                                                                                             |
-| `metadata.tags` | array\<string\> | ⬜ Optional | Custom tags for filters                                                                     |
-
+| Field           | Type            | Required    | Notes                                                                                                                                                                    |
+| --------------- | --------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`            | string          | ✅ Required | Your unique, stable customer ID, e.g. a numeric account ID sent as a string. Must not contain PII: if it's an email address or other personal data, hash it (any method) |
+| `full_name`     | string          | ✅ Required | First and last name, 4+ characters: plain A-Z letters, spaces, apostrophes, hyphens, periods. Accents and non-Latin characters aren't supported unless `company` is set  |
+| `company`       | string          | ⬜ Optional | Company name if present                                                                                                                                                  |
+| `email`         | string          | ✅ Required | Primary email address of the customer, unhashed                                                                                                                          |
+| `line1`         | string          | ✅ Required | Primary address line1 of the customer                                                                                                                                    |
+| `line2`         | string          | ⬜ Optional | Primary address line2 of the customer                                                                                                                                    |
+| `city`          | string          | ✅ Required | Primary address city of the customer                                                                                                                                     |
+| `state`         | string          | ✅ Required | Primary address state of the customer. 2-letter code for US addresses, e.g. `CA`                                                                                         |
+| `postal_code`   | string          | ✅ Required | Primary address postal_code of the customer. US: `92618` or `92618-1234`                                                                                                 |
+| `country_code`  | string          | ✅ Required | ISO 3166-1 alpha-2, uppercase (e.g. `US`), Primary address country_code of the customer                                                                                  |
+| `created_at`    | string          | ✅ Required | ISO 8601 — Customer creation date                                                                                                                                        |
+| `updated_at`    | string          | ✅ Required | ISO 8601 — Customer update date. Any address, email update should trigger this field change                                                                              |
+| `metadata`      | object          | ⬜ Optional |                                                                                                                                                                          |
+| `metadata.tags` | array\<string\> | ⬜ Optional | Custom tags for filters                                                                                                                                                  |
 
 **Customer JSONL file example**
 
