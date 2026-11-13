@@ -145,7 +145,7 @@ _identify the appropriate JSON file locations._
 ## Example Scripts
 
 Example scripts written in Python and Ruby provide a complete example of the AWS SDK operations required to upload
-`customer/customers_YYYYMMDD.jsonl` and `orders/orders_YYYYMMDD.jsonl` files to the customer's S3 Bucket. These scripts
+`customers/customers_YYYYMMDD.jsonl` and `orders/orders_YYYYMMDD.jsonl` files to the customer's S3 Bucket. These scripts
 can be easily modified with customer-specific parameters for initial testing purposes.
 
 ### Python Scripts
@@ -157,3 +157,8 @@ can be easily modified with customer-specific parameters for initial testing pur
 
 * [Upload via AWS Cross-Account Access](./code/aws-cross-account.example.rb)
 * [Upload via GCP Federated Identity](./code/gcp-federated-id.example.rb)
+
+### Validate Before Uploading
+
+* [validate-feed.py](./code/validate-feed.py) checks `customers` and `orders` files locally against PostPilot's
+  [validation rules](./validation-rules.md) before upload. No network calls, no field values in its output.

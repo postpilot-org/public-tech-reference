@@ -19,6 +19,7 @@
 * [Data Exchange via Amazon S3](data-exchange-via-amazon-s3.md)
 * [File Reference: Customers](file-reference-customers.md)
 * [File Reference: Orders](file-reference-orders.md)
+* [Validation Rules](validation-rules.md)
 
 ## Sync Frequency & Windows
 
@@ -29,14 +30,5 @@
 
 ## Validation Rules
 
-We validate incoming data and may skip invalid records.
-
-We check:
-
-* Required fields are present.
-* Date fields are valid ISO 8601 strings.
-* Numeric fields (**total_price**, **price**) have at most **2 decimal places**.
-* **customer_id** in orders corresponds to an existing (or separately provided) customer .
-* File size does not exceed **1 GB**.
-
-We recommend basic validation on your side before uploading.
+We validate incoming data and may skip invalid records. See [Validation Rules](validation-rules.md) for what makes a
+file go unprocessed or a record get skipped, the JSON Schemas, and a script to check your files before upload.
