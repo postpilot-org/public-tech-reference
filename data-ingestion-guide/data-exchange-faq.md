@@ -22,6 +22,11 @@
 1. Once access is verified and the customer is exchanging files successfully in S3, the data transfer job will be
    enabled to begin transferring the files for processing in PostPilot's ETL pipelines.
 
+### How do I send the security token for AWS cross-account access?
+
+Share the token with your PostPilot contact through a one-time secure link, a link that expires after it's opened
+once. Never send the token in a regular e-mail, chat message or support ticket.
+
 ### I'm getting an HTTP 403 Response Code from my Upload Script... What's the Issue?
 
 HTTP 403 error responses from the AWS SDK indicate that an S3 operation was attempted that is not allowed.

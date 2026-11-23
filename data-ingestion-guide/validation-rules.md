@@ -49,7 +49,7 @@ A record is also skipped if its mailing address (the customer record, or the ord
 
 ## Other Checks
 
-* Numeric fields (**total_price**, **price**) have at most **2 decimal places**.
+* Numeric fields (**total_price**, **price**) are JSON numbers, not strings, with at most **2 decimal places**.
 * **customer_id** in orders corresponds to an existing (or separately provided) customer.
 * `id` and `customer_id` contain no PII. Numeric or system IDs are fine as-is; hash an email address or other
   personal data used as an ID (any method, same value in both files).
