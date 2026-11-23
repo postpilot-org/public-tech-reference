@@ -6,7 +6,7 @@
 * File format: JSONL (one JSON object per line)
 * Encoding: UTF-8
 * Date/time format: ISO 8601 (e.g. 2025-03-27T10:15:00Z)
-* Decimals: 2-digit precision (e.g. 129.99)
+* Amounts: JSON numbers (not strings) with up to 2 decimal places (e.g. 129.99 or 129.9)
 * Max file size: 1 GB per file
 * Minimum sync interval: every 60 minutes
 * Data types:
@@ -27,6 +27,10 @@
 * Each file should contain all new and updated records since the previous run.
 * Overlapping windows (re-sending some records) is OK and recommended.
 * Inserts and updates are treated as upserts based on your id.
+* Send the complete record every time, not only the fields that changed. Each update replaces the stored record, and
+  a record missing a required field is skipped.
+* If the same id is sent more than once, the version with the latest `updated_at` is kept.
+* The feed doesn't delete records. Leave deleted customers and orders out of later files.
 
 ## Validation Rules
 

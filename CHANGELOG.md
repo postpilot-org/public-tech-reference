@@ -5,6 +5,13 @@ _each of the changes were made._
 
 ## `Data Ingestion Guide`
 
+### [11/23/2026]
+
+* Defines `total_price` as the total the customer paid, including shipping and taxes, after discounts.
+* Amounts are JSON numbers (not strings) with up to 2 decimal places.
+* Sync section: send complete records, latest `updated_at` wins for repeated ids, the feed doesn't delete records.
+* FAQ: send the AWS security token through a one-time secure link.
+
 ### [06/22/2026]
 
 * Adds `Data Ingestion FAQ` section to address common customer issues.

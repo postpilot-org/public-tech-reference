@@ -62,29 +62,29 @@ Example order JSON object
 
 Top-level:
 
-| Field              | Type              | Required    | Notes                                                                                |
-| ------------------ | ----------------- | ----------- | ------------------------------------------------------------------------------------ |
-| `id`               | string            | ✅ Required | Unique Order Id                                                                      |
-| `customer_id`      | string            | ✅ Required | Exact `id` of the customer in the customers file, including any hashing              |
-| `total_price`      | number            | ✅ Required | Total order price, greater than 0. Leave refunds, returns and $0 orders out          |
-| `currency`         | string            | ✅ Required | ISO currency code, e.g. `USD`                                                        |
-| `email`            | string            | ✅ Required | Email address                                                                        |
-| `coupon_codes`     | array\<string\>   | ⬜ Optional | Coupon codes if used                                                                 |
-| `shipping_address` | JSON              | ✅ Required | Shipping address                                                                     |
-| `billing_address`  | JSON              | ✅ Required | Billing Address                                                                      |
-| `line_items`       | array\<LineItem\> | ✅ Required | Order line item list                                                                 |
-| `created_at`       | string            | ✅ Required | ISO 8601 Order creation date                                                         |
-| `updated_at`       | string            | ✅ Required | ISO 8601 — must change whenever any attribute of the order or its line items changes |
-| `metadata`         | Map<String,Any>   | ⬜ Optional | Generic Field for storing tags or custom variables                                   |
+| Field              | Type              | Required    | Notes                                                                                                                            |
+| ------------------ | ----------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `id`               | string            | ✅ Required | Unique Order Id                                                                                                                  |
+| `customer_id`      | string            | ✅ Required | Exact `id` of the customer in the customers file, including any hashing                                                          |
+| `total_price`      | number            | ✅ Required | Total the customer paid, including shipping and taxes, after discounts. Greater than 0. Leave refunds, returns and $0 orders out |
+| `currency`         | string            | ✅ Required | ISO currency code, e.g. `USD`                                                                                                    |
+| `email`            | string            | ✅ Required | Email address                                                                                                                    |
+| `coupon_codes`     | array\<string\>   | ⬜ Optional | Coupon codes if used                                                                                                             |
+| `shipping_address` | JSON              | ✅ Required | Shipping address                                                                                                                 |
+| `billing_address`  | JSON              | ✅ Required | Billing Address                                                                                                                  |
+| `line_items`       | array\<LineItem\> | ✅ Required | Order line item list                                                                                                             |
+| `created_at`       | string            | ✅ Required | ISO 8601 Order creation date                                                                                                     |
+| `updated_at`       | string            | ✅ Required | ISO 8601 — must change whenever any attribute of the order or its line items changes                                             |
+| `metadata`         | Map<String,Any>   | ⬜ Optional | Generic Field for storing tags or custom variables                                                                               |
 
 LineItem Type:
 
-| Field      | Type    | Required    | Notes                            |
-| ---------- | ------- | ----------- | -------------------------------- |
-| `id`       | string  | ✅ Required | Product Id                       |
-| `name`     | string  | ✅ Required | Product Name                     |
-| `price`    | number  | ✅ Required | Unit price with 2 decimal places |
-| `quantity` | integer | ✅ Required | Number of items in the line item |
+| Field      | Type    | Required    | Notes                              |
+| ---------- | ------- | ----------- | ---------------------------------- |
+| `id`       | string  | ✅ Required | Product Id                         |
+| `name`     | string  | ✅ Required | Product Name                       |
+| `price`    | number  | ✅ Required | Unit price, up to 2 decimal places |
+| `quantity` | integer | ✅ Required | Number of items in the line item   |
 
 Address Type:
 
