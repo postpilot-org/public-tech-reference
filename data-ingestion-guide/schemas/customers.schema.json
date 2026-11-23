@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/postpilot-org/public-tech-reference/blob/main/data-ingestion-guide/schemas/customers.schema.json",
   "title": "Customer record",
-  "description": "One line of a customers_YYYYMMDD.jsonl file. Records that fail these rules are skipped by the pipeline, except an e-mail address in an ID field: those load, but must be fixed.",
+  "description": "One line of a customers_YYYYMMDD_HHMMSS.jsonl file. Records that fail these rules are skipped by the pipeline, except an e-mail address in an ID field: those load, but must be fixed.",
   "type": "object",
   "required": ["id", "full_name", "email", "line1", "city", "state", "postal_code", "country_code", "created_at", "updated_at"],
   "properties": {

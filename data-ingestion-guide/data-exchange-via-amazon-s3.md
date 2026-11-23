@@ -145,7 +145,7 @@ _identify the appropriate JSON file locations._
 ## Example Scripts
 
 Example scripts written in Python and Ruby provide a complete example of the AWS SDK operations required to upload
-`customers/customers_YYYYMMDD.jsonl` and `orders/orders_YYYYMMDD.jsonl` files to the customer's S3 Bucket. These scripts
+`customers/customers_YYYYMMDD_HHMMSS.jsonl` and `orders/orders_YYYYMMDD_HHMMSS.jsonl` files to the customer's S3 Bucket. These scripts
 can be easily modified with customer-specific parameters for initial testing purposes.
 
 ### Python Scripts
