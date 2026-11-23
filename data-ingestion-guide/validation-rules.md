@@ -2,12 +2,24 @@
 
 We validate incoming data and may skip invalid records.
 
+## File Names
+
+Give every upload a name nobody has used before, built from the date and UTC time of the upload:
+
+* `customers/customers_YYYYMMDD_HHMMSS.jsonl`, e.g. `customers_20261123_140512.jsonl`
+* `orders/orders_YYYYMMDD_HHMMSS.jsonl`, e.g. `orders_20261123_140512.jsonl`
+
+If a second file arrives on the same UTC day with the same name as an earlier one, it replaces the earlier file and
+the earlier file's records may never load. No error is returned. A date-only name like `orders_20261123.jsonl`
+works for a once-a-day sync, but any extra upload that day (a history backfill, a re-send, a manual test) needs its
+own name. If your tool splits an export into parts, keep the part number in the name too.
+
 ## Files That Won't Be Processed
 
 A file is not processed if:
 
 * The file name does not end in `.jsonl`. The upload succeeds and no error is returned, but the file is never picked
-  up, so name every file `customers_YYYYMMDD.jsonl` or `orders_YYYYMMDD.jsonl`.
+  up. Name files as described in [File Names](#file-names).
 * More than **100** lines are not valid JSON, e.g. unescaped `"` or `\`, or a raw line break inside a value. Build
   each line with a JSON serializer (`json.dumps`, `JSON.stringify`, etc.), not string concatenation.
 * File size exceeds **1 GB**.

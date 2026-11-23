@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/postpilot-org/public-tech-reference/blob/main/data-ingestion-guide/schemas/orders.schema.json",
   "title": "Order record",
-  "description": "One line of an orders_YYYYMMDD.jsonl file. Records that fail these rules are skipped by the pipeline, except an e-mail address in an ID field: those load, but must be fixed.",
+  "description": "One line of an orders_YYYYMMDD_HHMMSS.jsonl file. Records that fail these rules are skipped by the pipeline, except an e-mail address in an ID field: those load, but must be fixed.",
   "type": "object",
   "required": ["id", "customer_id", "total_price", "currency", "shipping_address", "billing_address", "line_items", "created_at", "updated_at"],
   "properties": {

@@ -46,7 +46,8 @@ temp_credentials = Aws::Credentials.new(
 # Initialize the S3 client with assumed temporary credentials...
 s3_client = Aws::S3::Client.new(credentials: temp_credentials, region: S3_BUCKET_REGION)
 
-customers_file_name = "customers_2026022012.jsonl"
+# Use a new name for every upload (date + UTC time). A repeated name replaces the earlier file.
+customers_file_name = "customers_20260220_120000.jsonl"
 s3_client.put_object(
   bucket: S3_BUCKET_NAME,
   key:  "customers/#{customers_file_name}",
@@ -56,7 +57,7 @@ s3_client.put_object(
 
 puts "Successfully uploaded object 'customers/#{customers_file_name}' to bucket '#{S3_BUCKET_NAME}'..."
 
-orders_file_name = "orders_2026022012.jsonl"
+orders_file_name = "orders_20260220_120000.jsonl"
 s3_client.put_object(
   bucket: S3_BUCKET_NAME,
   key:  "orders/#{orders_file_name}",

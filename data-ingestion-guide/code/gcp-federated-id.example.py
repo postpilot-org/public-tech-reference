@@ -51,7 +51,8 @@ s3_client = boto3.client(
     aws_session_token=credentials["SessionToken"],
 )
 
-CUSTOMERS_FILE_NAME = "customers_2026032012.jsonl"
+# Use a new name for every upload (date + UTC time). A repeated name replaces the earlier file.
+CUSTOMERS_FILE_NAME = "customers_20260320_120000.jsonl"
 with open(f"/path/to/{CUSTOMERS_FILE_NAME}", "rb") as f:
     s3_client.put_object(
         Bucket=S3_BUCKET_NAME,
@@ -62,7 +63,7 @@ with open(f"/path/to/{CUSTOMERS_FILE_NAME}", "rb") as f:
 
 print(f"Successfully uploaded object 'customers/{CUSTOMERS_FILE_NAME}' to bucket '{S3_BUCKET_NAME}'...")
 
-ORDERS_FILE_NAME = "orders_2026032012.jsonl"
+ORDERS_FILE_NAME = "orders_20260320_120000.jsonl"
 with open(f"/path/to/{ORDERS_FILE_NAME}", "rb") as f:
     s3_client.put_object(
         Bucket=S3_BUCKET_NAME,

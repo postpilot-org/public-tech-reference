@@ -546,8 +546,8 @@ def main():
         elif name.startswith("order"):
             kind = "orders"
         else:
-            print(f"Can't tell if {path} is a customers or orders file. Name it customers_YYYYMMDD.jsonl or "
-                  "orders_YYYYMMDD.jsonl.", file=sys.stderr)
+            print(f"Can't tell if {path} is a customers or orders file. Name it customers_YYYYMMDD_HHMMSS.jsonl or "
+                  "orders_YYYYMMDD_HHMMSS.jsonl.", file=sys.stderr)
             return 2
         kinds_seen.add(kind)
         ids_out = customer_ids if kind == "customers" else set()
